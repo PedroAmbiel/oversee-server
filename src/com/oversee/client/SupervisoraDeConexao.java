@@ -3,6 +3,7 @@ package com.oversee.client;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.random.RandomGenerator;
 
 public class SupervisoraDeConexao extends Thread
 {
@@ -27,6 +28,7 @@ public class SupervisoraDeConexao extends Thread
 
     public void run ()
     {
+        Random random = new Random();
 
         ObjectOutputStream transmissor;
         try
@@ -47,7 +49,7 @@ public class SupervisoraDeConexao extends Thread
             new ObjectInputStream(
             this.conexao.getInputStream());
         }
-        catch (Exception err0)
+        catch (Exception erro)
         {
             try
             {
@@ -76,42 +78,51 @@ public class SupervisoraDeConexao extends Thread
                 this.usuarios.add (this.usuario);
             }
 
-
+            int numThread = random.nextInt(100);
             for(;;)
             {
-
                 Comunicado comunicado = this.usuario.envie ();
-                System.out.println("shadfbskdhbfsdhbf");
+                System.out.println("Iniciado a thread " + numThread);
 
-                if (comunicado==null)
+                if (comunicado==null) {
                     return;
-                else if (comunicado instanceof PedidoDeOperacao)
-                {
-					PedidoDeOperacao pedidoDeOperacao = (PedidoDeOperacao)comunicado;
-					
-					switch (pedidoDeOperacao.getOperacao())
-					{
-						case '+':
-						    this.valor += pedidoDeOperacao.getValor();
-						    break;
-						    
-						case '-':
-						    this.valor -= pedidoDeOperacao.getValor();
-						    break;
-						    
-						case '*':
-						    this.valor *= pedidoDeOperacao.getValor();
-						    break;
-						    
-						case '/':
-						    this.valor /= pedidoDeOperacao.getValor();
-                    }
                 }
-                else if (comunicado instanceof PedidoDeResultado)
-                {
-                    this.usuario.receba (new Resultado (this.valor));
+                else if(comunicado instanceof PedidoDeValidacaoCpfCnpj){
+                    //System.out.println("Entrou no pedido de validar CPF/CNPJ");
+
+                    PedidoDeValidacaoCpfCnpj pedido = (PedidoDeValidacaoCpfCnpj)comunicado;
+
+                    //System.out.println("Thread de num " + numThread + " entrando em sleep 5000");
+                    //sleep(5000);
+
+                    this.usuario.receba(PedidoDeValidacaoCpfCnpj.validarCpfCnpj(pedido));
+
+                    System.out.println("Pedido de CPF/CNPJ da thread " + numThread + " enviado \n\n");
                 }
-                else if (comunicado instanceof PedidoParaSair)
+                else if(comunicado instanceof PedidoDeValidacaoLogin){
+
+                    PedidoDeValidacaoLogin login = (PedidoDeValidacaoLogin)comunicado;
+
+                    this.usuario.receba(PedidoDeValidacaoLogin.validarLogin(login));
+
+                    System.out.println("Pedido de Login da thread " + numThread + " enviado \n\n");
+
+                }else if(comunicado instanceof PedidoDeValidacaoNovoPrestador){
+
+                    PedidoDeValidacaoNovoPrestador novoPrestador = (PedidoDeValidacaoNovoPrestador)comunicado;
+
+                    this.usuario.receba(PedidoDeValidacaoNovoPrestador.validarNovoPrestador(novoPrestador));
+
+                    System.out.println("Pedido de Novo Cadastro Prestador da thread " + numThread + " enviado \n\n");
+
+                } else if (comunicado instanceof PedidoDeValidacaoEstado) {
+                    PedidoDeValidacaoEstado estado = (PedidoDeValidacaoEstado)comunicado;
+
+                    this.usuario.receba(PedidoDeValidacaoEstado.verificarEstado(estado.getEstado()));
+
+                    System.out.println("Pedido de Validar Estado da thread " + numThread + " enviado \n\n");
+
+                } else if (comunicado instanceof PedidoParaSair)
                 {
                     synchronized (this.usuarios)
                     {

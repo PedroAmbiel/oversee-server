@@ -67,7 +67,7 @@ public class Parceiro
         try
         {
             if (this.proximoComunicado==null) this.proximoComunicado = (Comunicado)this.receptor.readObject();
-            System.out.println("Entrou aqui");
+            //System.out.println("Entrou aqui");
             Comunicado ret         = this.proximoComunicado;
             this.proximoComunicado = null;
             return ret;
