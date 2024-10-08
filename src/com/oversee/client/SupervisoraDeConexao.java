@@ -49,7 +49,7 @@ public class SupervisoraDeConexao extends Thread
             new ObjectInputStream(
             this.conexao.getInputStream());
         }
-        catch (Exception err0)
+        catch (Exception erro)
         {
             try
             {
@@ -95,7 +95,7 @@ public class SupervisoraDeConexao extends Thread
                     //System.out.println("Thread de num " + numThread + " entrando em sleep 5000");
                     //sleep(5000);
 
-                    this.usuario.receba(new Validado(PedidoDeValidacaoCpfCnpj.validarCpfCnpj(pedido)));
+                    this.usuario.receba(PedidoDeValidacaoCpfCnpj.validarCpfCnpj(pedido));
 
                     System.out.println("Pedido de CPF/CNPJ da thread " + numThread + " enviado \n\n");
                 }
@@ -103,7 +103,7 @@ public class SupervisoraDeConexao extends Thread
 
                     PedidoDeValidacaoLogin login = (PedidoDeValidacaoLogin)comunicado;
 
-                    this.usuario.receba(new Validado(PedidoDeValidacaoLogin.validarLogin(login)));
+                    this.usuario.receba(PedidoDeValidacaoLogin.validarLogin(login));
 
                     System.out.println("Pedido de Login da thread " + numThread + " enviado \n\n");
 
@@ -111,14 +111,14 @@ public class SupervisoraDeConexao extends Thread
 
                     PedidoDeValidacaoNovoPrestador novoPrestador = (PedidoDeValidacaoNovoPrestador)comunicado;
 
-                    this.usuario.receba(new Validado(PedidoDeValidacaoNovoPrestador.validarNovoPrestador(novoPrestador)));
+                    this.usuario.receba(PedidoDeValidacaoNovoPrestador.validarNovoPrestador(novoPrestador));
 
                     System.out.println("Pedido de Novo Cadastro Prestador da thread " + numThread + " enviado \n\n");
 
                 } else if (comunicado instanceof PedidoDeValidacaoEstado) {
                     PedidoDeValidacaoEstado estado = (PedidoDeValidacaoEstado)comunicado;
 
-                    this.usuario.receba(new Validado(PedidoDeValidacaoEstado.verificarEstado(estado.getEstado())));
+                    this.usuario.receba(PedidoDeValidacaoEstado.verificarEstado(estado.getEstado()));
 
                     System.out.println("Pedido de Validar Estado da thread " + numThread + " enviado \n\n");
 
