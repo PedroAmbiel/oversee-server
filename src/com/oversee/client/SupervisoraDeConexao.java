@@ -122,11 +122,15 @@ public class SupervisoraDeConexao extends Thread
 
                     System.out.println("Pedido de Validar Estado da thread " + numThread + " enviado \n\n");
 
-                } else if (comunicado instanceof PedidoParaSair)
-                {
-                    synchronized (this.usuarios)
-                    {
-                        this.usuarios.remove (this.usuario);
+                } else if (comunicado instanceof PedidoDeValidacaoEmail) {
+                    PedidoDeValidacaoEmail email = (PedidoDeValidacaoEmail) comunicado;
+
+                    this.usuario.receba(PedidoDeValidacaoEmail.validarEmail(email));
+
+                    System.out.println("Pedido de Validar Estado da thread " + numThread + " enviado \n\n");
+                } else if (comunicado instanceof PedidoParaSair) {
+                    synchronized (this.usuarios) {
+                        this.usuarios.remove(this.usuario);
                     }
                     this.usuario.adeus();
                 }
