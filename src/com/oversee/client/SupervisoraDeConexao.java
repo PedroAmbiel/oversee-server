@@ -111,6 +111,9 @@ public class SupervisoraDeConexao extends Thread
 
                     PedidoDeValidacaoNovoPrestador novoPrestador = (PedidoDeValidacaoNovoPrestador)comunicado;
 
+                    //System.out.println("Thread de num " + numThread + " entrando em sleep 5000");
+                    //sleep(5000);
+
                     this.usuario.receba(PedidoDeValidacaoNovoPrestador.validarNovoPrestador(novoPrestador));
 
                     System.out.println("Pedido de Novo Cadastro Prestador da thread " + numThread + " enviado \n\n");
